@@ -6,6 +6,7 @@ from .forms import ProductForm, IceCreamForm
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.forms import modelformset_factory
+from django.http import HttpResponse
 
 def product_list(request):
     products = Product.objects.all()
@@ -34,6 +35,18 @@ def add_product(request):
         form = ProductForm()
 
     return render(request, 'product_form2.html', {'form': form})
+
+def add_dz26(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            print("Все норм")
+            return redirect('/')
+    else:
+        form = ProductForm()
+    return render(request, 'product_add_dz26.html', {'form': form})
+
 
 def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)

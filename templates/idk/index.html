@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список товаров</title>
+</head>
+<body>
+    <h1>Все товары</h1>
+
+    {% if products %}
+        <ul>
+        {% for product in products %}
+            <li>
+                <strong>{{ product.title }}</strong><br>
+                {{ product.description }}<br>
+                Цена: {{ product.price }}<br>
+                В наличии: {{ product.available|yesno:"Да,Нет" }}<br>
+                Категории:
+                {% for cat in product.categories.all %}
+                    {{ cat.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </li>
+            <hr>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Товаров пока нет.</p>
+    {% endif %}
+</body>
+</html>

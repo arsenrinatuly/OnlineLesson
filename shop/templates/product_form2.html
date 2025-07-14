@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить товар</title>
+</head>
+<body>
+    <h1>Добавление нового товара</h1>
+
+    <form method="post" novalidate {% if form.is_multipart %} enctype="multipart/form-data" {% endif %}>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <ul>
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% for field  in form.visible_fields %}
+            <div>
+                {{ field.label_tag }}
+                {{ field }}
+
+                {% if field.help_text %}
+                    {{ field.help_text }}
+                {% endif %}
+
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Сохранить</button>
+    </form>
+</body>
+</html>

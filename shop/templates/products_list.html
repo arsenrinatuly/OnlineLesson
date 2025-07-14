@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список товаров</title>
+</head>
+<body>
+    <h1>Все товары</h1>
+
+    {% if products %}
+        <ul>
+        {% for product in products %}
+            <li>
+                <strong>{{ product.title }}</strong><br>
+                {{ product.description }}<br>
+                Цена: {{ product.price }}<br>
+                В наличии: {{ product.available|yesno:"Да,Нет" }}<br>
+                Категории:
+                {% for cat in product.categories.all %}
+                    {{ cat.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </li>
+            <hr>
+        {% endfor %}
+        </ul>
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">Первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}"> < Назад </a>
+            {% endif %}
+            <span>Страница {{ page_obj.number}} из {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}"> Вперед > </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}"> Последняя </a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Товаров пока нет.</p>
+    {% endif %}
+</body>
+</html>

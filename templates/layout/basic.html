@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Каталог товаров{% endblock %}</title>
+</head>
+<body>
+
+    <header>
+        {% block navbar %}
+            <div class="head_main">
+                <span class="head_title">Каталог товаров</span>
+            </div>
+        {% endblock %}
+    </header>
+
+    <nav>
+        {% block nav %}
+            <a href="{% url 'index' %}">Главная</a>
+        {% endblock %}
+    </nav>
+
+    <main>
+        {% block main %}
+            {% block content %}{% endblock %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        {% block footer %}
+            2025 Каталог товаров
+        {% endblock %}
+    </footer>
+
+</body>
+</html>

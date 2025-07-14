@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить товар</title>
+</head>
+<body>
+    <h1>Добавление нового товара</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <b>1</b>
+        <hr>
+        {{ form.as_p }}
+        <hr>
+        <b>2</b>
+        <hr>
+        {{ form.as_ul }}
+        <hr>
+        <b>3</b>
+        <hr>
+        {{ form.as_table }}
+        <button type="submit">Сохранить</button>
+    </form>
+</body>
+</html>

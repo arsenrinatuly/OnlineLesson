@@ -1,5 +1,5 @@
 from django import forms    
-from .models import Product, Icecream
+from .models import Product, Icecream, Course, Lesson
 
 class ProductForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput(), label="пароль")
@@ -64,3 +64,31 @@ class IceCreamForm(forms.ModelForm):
     class Meta:
         model = Icecream
         fields = ['name', 'price', 'available']
+
+
+class CourseForm(forms.ModelForm):
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price < 10000 or price > 100000:
+            raise forms.ValidationError('Цена должна быть от 10000 и до 100 000')
+        return price
+
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+        if len(title.strip()) < 5:
+            raise forms.ValidationError('Название не должно содержать меньше 5 символов')
+        return title
+    
+    class Meta:
+        model = Course
+        fields = ['title', 'price', 'published', 'category']
+
+        widgets = {
+            'description' : forms.Textarea(attrs={'rows':5 , 'cols': 40}),
+            'published': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
+        }
+
+class LessonForm(forms.ModelForm):
+    class Meta:
+        model = Lesson
+        fields = ['title', 'video_link', 'course']

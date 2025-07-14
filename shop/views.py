@@ -1,12 +1,38 @@
 from django.shortcuts import render, redirect
 
-from .models import Product, Icecream
+from .models import Product, Icecream, Course, Lesson
 # Create your views here.
-from .forms import ProductForm, IceCreamForm
+from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
-from django.forms import modelformset_factory
+from django.forms import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse
+
+
+def add_course(request):
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('add_course')
+    else:
+        form = CourseForm()
+    return render(request, 'courseform.html', {'form': form})
+
+def course_modelformset(request):
+    CourseModelFormset = modelformset_factory(Course, CourseForm, can_delete=True, extra=1)
+    queryset = Course.objects.all()[:10]
+    if request.method == 'POST':
+        formset = CourseModelFormset(request.POST)
+        if formset.is_valid():
+            formset.save()
+            return redirect('/')
+    else:
+        formset = CourseModelFormset(queryset=queryset)
+    
+    return render(request, 'courseformset.html', {'formset': formset})
+
+
 
 def product_list(request):
     products = Product.objects.all()
@@ -81,3 +107,22 @@ def icecream_form(request):
     else:
         form = IceCreamForm()
     return render(request, 'icecream_form.html', {'form': form})
+
+
+def course_with_lessons_view(request):
+    LessonFormSet = inlineformset_factory(
+        Course, Lesson, form=LessonForm, extra=1, max_num=5, can_delete=True
+    )
+    if request.method == 'POST':
+        course_form = CourseForm(request.POST)
+        formset = LessonFormSet(request.POST)
+        if course_form.is_valid() and formset.is_valid():
+            course = course_form.save()
+            formset.instance = course
+            formset.save()
+            return redirect('/')
+    else:
+        course_form = CourseForm
+        formset = LessonFormSet
+
+    return render(request, 'course_with_lessons.html',{'form': course_form, 'formset' : formset})

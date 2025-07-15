@@ -126,3 +126,12 @@ def course_with_lessons_view(request):
         formset = LessonFormSet
 
     return render(request, 'course_with_lessons.html',{'form': course_form, 'formset' : formset})
+
+def home_view(request):
+    if request.user.is_authenticated:
+        print("Пользователь вошел"),
+        print('name:', request.user.username),
+        print('id', request.user.id),
+    else:
+        print('Незивестный зашел на сайт')
+    return render(request, 'home.html')

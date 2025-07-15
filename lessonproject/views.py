@@ -6,3 +6,4 @@ from django.core.paginator import Paginator
 
 def index(request):
     return render(request, 'idk/index.html')
+

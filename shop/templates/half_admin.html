@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <h1>Привет, {{ user.username }}</h1>
+        <p>Ты тот у кого есть права изменять\добавлять\удалять пользователей</p>
+        <a href="{% url 'user_info' %}">Личный кабинет</a>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Выйти</button>
+        </form>
+        <a href="">Редактировать профиль</a>
+    {% else %}
+        <a href="{% url 'login' %}">Войти в систему</a>
+    {% endif %}
+</body>
+</html>

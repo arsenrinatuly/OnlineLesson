@@ -7,6 +7,36 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.forms import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
+
+@login_required
+@permission_required('auth.change_user', raise_exception=True)
+def half_admin(request):
+    return render(request, 'half_admin.html')
+
+def home_view(request):
+    if request.user.is_authenticated:
+        print("Пользователь вошел"),
+        print('name:', request.user.username),
+        print('id', request.user.id),
+    else:
+        print('Незивестный зашел на сайт')
+    return render(request, 'home.html')
+
+@login_required
+def user_info(request):
+    user = request.user
+    groups = user.groups.all()
+    permissions = user.get_all_permissions()
+    return render(request, 'user_info.html', {'user': user, 'groups': groups, 'permissions': permissions})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url='login')
+def for_staff(request):
+    return render(request, 'forstaff.html')
+
 
 
 def add_course(request):
@@ -127,11 +157,3 @@ def course_with_lessons_view(request):
 
     return render(request, 'course_with_lessons.html',{'form': course_form, 'formset' : formset})
 
-def home_view(request):
-    if request.user.is_authenticated:
-        print("Пользователь вошел"),
-        print('name:', request.user.username),
-        print('id', request.user.id),
-    else:
-        print('Незивестный зашел на сайт')
-    return render(request, 'home.html')

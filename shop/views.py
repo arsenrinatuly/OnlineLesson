@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from .models import Product, Icecream, Course, Lesson
+from .models import Product, Icecream, Course, Lesson, Author, Book
 # Create your views here.
 from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm
 from django.shortcuts import get_object_or_404
@@ -10,6 +10,20 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.http import HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
+
+
+
+
+
+
+def books_list(request):
+    bk = Book.objects.select_related('author').defer('description', 'author__bio')
+    bk2 = Book.objects.select_related('author').only('title', 'author__name')
+    return render(request, 'book_list.html', {'bk': bk, 'bk2': bk2})
+
+
+
 
 @login_required
 @permission_required('auth.change_user', raise_exception=True)
@@ -79,18 +93,26 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
-            product = form.save(commit=False)  
+            try:
+                with transaction.atomic():
+                    product = form.save(commit=False)  
+                    print('Название:', form.cleaned_data['title'])
+                    print('Категории', form.cleaned_data['categories'])
+                    print('Измененные поля', form.changed_data)
 
-            print('Название:', form.cleaned_data['title']),
-            print('Категории', form.cleaned_data['categories']),
-            print('Измененные поля', form.changed_data)
-            product.save()
-            form.save_m2m()
-            return redirect('/') 
+                    raise Exception("Тест отката")
+
+                    product.save()
+                    form.save_m2m()
+                    return redirect('/') 
+            except Exception as e:
+                print('Ошибка произошла в транзакции:', e)
+
     else:
         form = ProductForm()
 
     return render(request, 'product_form2.html', {'form': form})
+
 
 def add_dz26(request):
     if request.method == 'POST':

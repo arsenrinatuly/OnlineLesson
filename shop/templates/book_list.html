@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Метод defer</p>
+    {% for book in bk %}
+        {{ book.title }}
+        {{ book.author.name }}
+    {% endfor %}
+    <hr>
+    <p>Метод only</p>
+    {% for books in bk2 %}
+        {{ books.title }}
+        {{ books.author.name }}
+    {% endfor %}
+</body>
+</html>

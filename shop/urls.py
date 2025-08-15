@@ -3,9 +3,10 @@ from .views import (add_product,
                     edit_product,
                     product_list, 
                     products_formset_view, 
-                    icecream_form, add_dz26, add_course, course_modelformset, course_with_lessons_view, user_info, for_staff, half_admin)
+                    icecream_form, add_dz26, add_course, course_modelformset, course_with_lessons_view, user_info, for_staff, half_admin, books_list)
 
 urlpatterns = [
+    path('booklist/', books_list, name='bookslist'),
     path('halfadmin', half_admin, name='halfadmin'),
     path('userinfo/', user_info, name='user_info'),
     path('forstaff/', for_staff, name='forstaff' ),

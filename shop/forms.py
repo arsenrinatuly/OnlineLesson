@@ -1,5 +1,21 @@
 from django import forms    
 from .models import Product, Icecream, Course, Lesson
+from captcha.fields import CaptchaField
+
+
+class ProductSearchForm(forms.Form):
+    query = forms.CharField(label='поиск товара', max_length=100, required=False)
+    captcha = CaptchaField()
+
+
+class VoteForm(forms.Form):
+    choice = forms.ChoiceField(
+        choices=[('yes', 'Да'), ('no', 'Нет')],
+        widget=forms.RadioSelect,
+        label="Вы поддерживаете этот учебный проект?"
+    )
+
+
 
 class ProductForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput(), label="пароль")

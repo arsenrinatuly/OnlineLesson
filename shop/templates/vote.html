@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Голосование</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+
+    <h2 class="mb-3">Форма голосования</h2>
+
+    <form method="post" class="card p-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Голосовать</button>
+    </form>
+
+    {% if result %}
+        <div class="alert alert-info mt-3">
+            {{ result }}
+        </div>
+    {% endif %}
+
+</body>
+</html>

@@ -3,28 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Добро пожаловать!</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>добро пожаловать!</h1>
-    <li>
-        <ul>Имя: {{ user.first_name }}</ul>
-        <ul>Фамилия: {{ user.last_name }}</ul>
-        <ul>Электронная почта: {{ user.email }}</ul>
-        <ul>Дата последнего входа: {{ user.last_login }}</ul>
-        <ul>Дата регистрации: {{ user.date_joined }}</ul>
-        <ul>Активен: {{ user.is_active }}</ul>
-        <ul>Персонал: {{ user.is_staff }}</ul>
-        <ul>Суперпользователь: {{ user.is_superuser }}</ul>
-        <ul>
-            {% for group in groups %}
-                <li>{{ group.name }}</li>
-            {% endfor %}
-        </ul>
-        <ul>{% for perm in permissions %}
-                <li>{{ perm }}</li>
-            {% endfor %}
-        </ul>
-    </li>
+<div class="container mt-4">
+    <h1 class="mb-4">Добро пожаловать!</h1>
+    <ul class="list-group">
+        <li class="list-group-item">Имя: {{ user.first_name }}</li>
+        <li class="list-group-item">Фамилия: {{ user.last_name }}</li>
+        <li class="list-group-item">Электронная почта: {{ user.email }}</li>
+        <li class="list-group-item">Дата последнего входа: {{ user.last_login }}</li>
+        <li class="list-group-item">Дата регистрации: {{ user.date_joined }}</li>
+        <li class="list-group-item">Активен: {{ user.is_active }}</li>
+        <li class="list-group-item">Персонал: {{ user.is_staff }}</li>
+        <li class="list-group-item">Суперпользователь: {{ user.is_superuser }}</li>
+        <li class="list-group-item">
+            Группы:
+            <ul class="list-group list-group-flush">
+                {% for group in groups %}
+                    <li class="list-group-item">{{ group.name }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li class="list-group-item">
+            Права:
+            <ul class="list-group list-group-flush">
+                {% for perm in permissions %}
+                    <li class="list-group-item">{{ perm }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

@@ -6,6 +6,9 @@ from datetime import timedelta
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+
+
+
 from django.conf import settings
 
 # Create your models here.
@@ -45,6 +48,25 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, related_name='lessons', on_delete=models.CASCADE)
     
 
+class ProductQuerySet(models.QuerySet):
+    def expensive(self):
+        return self.filter(price__gte=50000)
+    
+    def cheap(self):
+        return self.filter(price__lt=10000)
+
+
+class ProductManager(models.Manager):
+    def get_queryset(self):
+        return ProductQuerySet(self.model, using=self._db)
+    
+    def expensive(self):
+        return self.get_queryset().expensive()
+    
+    def cheap(self):
+        return self.get_queryset().cheap()
+
+
 class Product(models.Model):
     title = models.CharField(max_length=30, verbose_name='название')
     description = models.TextField(verbose_name='описание', blank=True)
@@ -53,6 +75,12 @@ class Product(models.Model):
     data_added = models.DateField(auto_now_add=True, verbose_name='дата добавления')
     categories = models.ManyToManyField('Category', related_name='products')
     
+    objects = ProductManager()
+
+    def __str__(self):
+        return f"{self.title} | {self.price}"
+
+
 class Icecream(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=6, decimal_places=2)

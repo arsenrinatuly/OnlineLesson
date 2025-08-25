@@ -3,7 +3,8 @@ from .views import (add_product,
                     edit_product,
                     product_list, 
                     products_formset_view, 
-                    icecream_form, add_dz26, add_course, course_modelformset, course_with_lessons_view, user_info, for_staff, half_admin, books_list)
+                    icecream_form, add_dz26, add_course, course_modelformset, course_with_lessons_view, user_info, for_staff, 
+                    half_admin, books_list, productsearchform, test_transaction, vote_view)
 
 urlpatterns = [
     path('booklist/', books_list, name='bookslist'),
@@ -19,4 +20,7 @@ urlpatterns = [
     path('addcourse/', add_course, name='add_course'),
     path('coursemodel/', course_modelformset, name="course_modelformset"),
     path('coursewithlesson/', course_with_lessons_view, name='coursewithlesson'),
+    path('productsearch/', productsearchform, name='productsearchform'),
+    path('test-transaction/', test_transaction, name='test_transaction'),
+    path('vote/', vote_view, name='vote_view'),
 ]

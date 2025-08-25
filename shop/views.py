@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from .models import Product, Icecream, Course, Lesson, Author, Book
 # Create your views here.
-from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm
+from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm, ProductSearchForm, VoteForm
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.forms import modelformset_factory, inlineformset_factory
@@ -10,9 +10,22 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.http import HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 
+
+
+def vote_view(request):
+    result = None
+    if request.method == 'POST':
+        form = VoteForm(request.POST)
+        if form.is_valid():
+            choice = form.cleaned_data['choice']
+            result = "Вы выбрали: Да" if choice == "yes" else "Вы выбрали: Нет"
+    else:
+        form = VoteForm()
+
+    return render(request, 'vote.html', {'form' : form , 'result' : result})
 
 
 
@@ -179,3 +192,35 @@ def course_with_lessons_view(request):
 
     return render(request, 'course_with_lessons.html',{'form': course_form, 'formset' : formset})
 
+
+
+
+def productsearchform(request):
+    products = []
+    if request.method == 'POST':
+        form = ProductSearchForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            if query:
+                products = Product.objects.filter(title__icontains=query)
+    else:
+        form = ProductSearchForm()
+
+    context = {'form' : form, 'products': products}
+    return render(request, 'product_search.html', context)
+
+
+
+def test_transaction(request):
+    try:
+        with transaction.atomic():
+            product = Product.objects.create(title='Тестовый товар', price=10000)
+
+            Product.objects.create(title='Дорогой товар', price=60000)
+
+            raise IntegrityError("Отказ транзакции для примера")
+    
+    except IntegrityError as e:
+        return HttpResponse(f"Транзакция отменена: {e}")
+    
+    return HttpResponse("Транзакция прошла успешно")

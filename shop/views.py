@@ -1,17 +1,47 @@
 from django.shortcuts import render, redirect
 
-from .models import Product, Icecream, Course, Lesson, Author, Book
+from .models import Product, Icecream, Course, Lesson, Author, Book, Photo
 # Create your views here.
-from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm, ProductSearchForm, VoteForm
+from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm, ProductSearchForm, VoteForm, ImageForm, PhotoForm
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.forms import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, FileResponse, Http404
 from django.core.exceptions import PermissionDenied
 from django.db import transaction, IntegrityError
+from django.conf import settings
+from django.contrib import messages
 
+
+import os
+import time
+
+
+
+
+def photo_list(request):
+    photos = Photo.objects.all()
+    return render(request, 'photo_list.html', {"photos" : photos})
+
+def upload_photo(request):
+    if request.method == 'POST':
+        form = PhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("photo_list")
+    else:
+        form = PhotoForm
+    return render(request, "upload_photo.html", {"form" : form})
+
+
+def delete_photo(request, pk):
+    photo = get_object_or_404(Photo, pk=pk)  
+    if request.method == "POST":
+        photo.delete()
+        return redirect("photo_list")
+    return redirect("photo_list")
 
 
 
@@ -27,6 +57,64 @@ def vote_view(request):
 
     return render(request, 'vote.html', {'form' : form , 'result' : result})
 
+
+
+def list_files(request):
+    upload_dir = os.path.join(settings.BASE_DIR, "files")
+    os.makedirs(upload_dir, exist_ok=True)
+
+    files = []
+    for entry in os.scandir(upload_dir):
+        if entry.is_file() and not entry.name.endswith(".txt"):
+            desc_file = entry.path + ".txt"
+            description = ""
+            if os.path.exists(desc_file):
+                with open(desc_file, "r" , encoding="utf-8") as f:
+                    description = f.read()
+            
+            files.append({
+                "name" : entry.name,
+                "url": f"/files/{entry.name}/",
+                "description": description
+            })
+    return render(request, "list_files.html", {"files": files})
+
+
+
+
+def upload_image(request):
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            img = request.FILES["img"]
+            description = form.cleaned_data["description"]
+            upload_dir = os.path.join(settings.BASE_DIR, "files")
+            os.makedirs(upload_dir, exist_ok=True)
+            ext = os.path.splitext(img.name)[1]
+            filename = f"{int(time.time())}{ext}"
+            filepath = os.path.join(upload_dir, filename)
+            with open(filepath, "wb+") as destination:
+                for chunk in img.chunks():
+                    destination.write(chunk)
+
+            desc_path = filepath + ".txt"
+            with open(desc_path, "w", encoding="utf-8") as f:
+                f.write(description)
+
+            return redirect("list_files")
+        
+    else:
+        form = ImageForm
+    
+    return render(request, "upload.html", {"form" : form})
+
+
+def serve_file(request, filename):
+    upload_dir = os.path.join(settings.BASE_DIR, "files")
+    filepath = os.path.join(upload_dir, filename)
+    if not os.path.exists(filepath):
+        raise Http404("Файл не найден")
+    return FileResponse(open(filepath, "rb"), as_attachment=False)
 
 
 
@@ -71,6 +159,7 @@ def add_course(request):
         form = CourseForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Курс успешно добавлен, поздравляю!")
             return redirect('add_course')
     else:
         form = CourseForm()
@@ -108,13 +197,7 @@ def add_product(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    product = form.save(commit=False)  
-                    print('Название:', form.cleaned_data['title'])
-                    print('Категории', form.cleaned_data['categories'])
-                    print('Измененные поля', form.changed_data)
-
-                    raise Exception("Тест отката")
-
+                    product = form.save(commit=False)
                     product.save()
                     form.save_m2m()
                     return redirect('/') 

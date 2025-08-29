@@ -1,12 +1,21 @@
-<form method="POST">
-    {% csrf_token  %}
-    {{ form.as_p  }}
-    <button type="submit"> Поиск </button>
+{% extends "basic.html" %}
+
+{% block content %}
+<h1 class="mb-4">Поиск товаров</h1>
+
+<form method="POST" class="mb-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-primary">Поиск</button>
 </form>
-<ul>
+
+<ul class="list-group">
     {% for product in products %}
-        <li>{{ product.title }}</li>
+        <li class="list-group-item">{{ product.title }}</li>
     {% empty %}
-        <li>Товаров не найдено</li>
+        <li class="list-group-item text-muted">Товаров не найдено</li>
     {% endfor %}
 </ul>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Фото</title>
+</head>
+<body>
+    <h1>Список фото</h1>
+
+    <ul>
+        {% for photo in photos %}
+            <li>
+                <p>{{ photo.description }}</p>
+                <p>Оригинал:</p>
+                <img src="{{ photo.image.url }}" width="400">
+
+                <p>Миниатюра:</p>
+                {% load thumbnail %}
+                {% thumbnail photo.image 100x100 crop="center" as thumb %}
+                    <img src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}">
+
+                <form method="post" action="{% url 'delete_photo' photo.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Удалить</button>
+                </form>
+            </li>
+        {% empty %}
+            <li>Фотографий пока нет</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

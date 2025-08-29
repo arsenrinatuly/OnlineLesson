@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список файлов</title>
+</head>
+<body>
+    <h1>Список загруженных файлов</h1>
+
+    <ul>
+        {% for file in files %}
+            <li>
+
+                <a href="{% url 'serve_file' file.name %}">
+                    <img src="{% url 'serve_file' file.name %}" alt="{{ file.name }}" width="150">
+                </a>
+
+
+                <p><strong>{{ file.name }}</strong></p>
+                <p>{{ file.description }}</p>
+
+                <a href="{% url 'serve_file' file.name %}">Открыть</a>
+            </li>
+        {% empty %}
+            <li>Файлы пока не загружены.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

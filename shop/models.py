@@ -5,13 +5,25 @@ from datetime import timedelta
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-
+from easy_thumbnails.fields import ThumbnailerImageField
 
 
 
 from django.conf import settings
 
 # Create your models here.
+
+class Photo(models.Model):
+    image = ThumbnailerImageField(
+        upload_to="photos/",
+        resize_source={'size': (400, 300), 'crop': 'scale'}
+    )
+    description = models.TextField()
+
+    def __str__(self):
+        return self.description[:20]
+
+
 
 
 class Category(models.Model):

@@ -1,5 +1,5 @@
 from django import forms    
-from .models import Product, Icecream, Course, Lesson
+from .models import Product, Icecream, Course, Lesson, Photo
 from captcha.fields import CaptchaField
 
 
@@ -13,6 +13,20 @@ class VoteForm(forms.Form):
         choices=[('yes', 'Да'), ('no', 'Нет')],
         widget=forms.RadioSelect,
         label="Вы поддерживаете этот учебный проект?"
+    )
+
+class PhotoForm(forms.ModelForm):
+    class Meta:
+        model = Photo
+        fields = ["image", "description"]
+
+
+class ImageForm(forms.Form):
+    img = forms.ImageField(label="Выберите изображение")
+    description = forms.CharField(
+        max_length=255,
+        label="Описание",
+        widget=forms.Textarea(attrs={"rows" : 2})
     )
 
 

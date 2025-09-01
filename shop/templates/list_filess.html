@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Загруженные файлы</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-4">
+    <h1 class="mb-3">Список файлов</h1>
+
+    <ul class="list-group">
+    {% for f in files %}
+        <li class="list-group-item">
+            <a href="{{ f.file.url }}" target="_blank">{{ f.file.name }}</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item text-muted">Файлов пока нет</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

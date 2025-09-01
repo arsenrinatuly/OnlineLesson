@@ -1,7 +1,19 @@
 from django import forms    
-from .models import Product, Icecream, Course, Lesson, Photo
+from .models import Product, Icecream, Course, Lesson, Photo, UploadFile
 from captcha.fields import CaptchaField
 
+
+class UploadFileform(forms.ModelForm):
+    class Meta:
+        model = UploadFile
+        fields = ["file"]
+
+    def clean_title(self):
+        file = self.cleaned_data.get('file')
+        if file:
+            if not file.name.endswith(('xlsx', '.pdf')):
+                raise forms.ValidationError('Можно загружать только xslx or pdf')
+        return file
 
 class ProductSearchForm(forms.Form):
     query = forms.CharField(label='поиск товара', max_length=100, required=False)

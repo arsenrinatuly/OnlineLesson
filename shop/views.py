@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 
-from .models import Product, Icecream, Course, Lesson, Author, Book, Photo
+from .models import Product, Icecream, Course, Lesson, Author, Book, Photo, UploadFile
 # Create your views here.
-from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm, ProductSearchForm, VoteForm, ImageForm, PhotoForm
+from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm, ProductSearchForm, VoteForm, ImageForm, PhotoForm, UploadFileform
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.forms import modelformset_factory, inlineformset_factory
@@ -17,6 +17,23 @@ from django.contrib import messages
 
 import os
 import time
+
+
+def list_filess(request):
+    files = UploadFile.objects.all()
+    return render(request, "list_filess.html", {"files" : files})
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileform(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('upload_file')
+    else:
+        form = UploadFileform()
+
+    return render(request, 'upload_file.html', {'form': form})
 
 
 

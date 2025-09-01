@@ -24,6 +24,16 @@ class Photo(models.Model):
         return self.description[:20]
 
 
+class UploadFile(models.Model):
+    file = models.FileField(
+        upload_to="uploads/",
+        verbose_name="Файл (xslx или pdf)"
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.file)
+
 
 
 class Category(models.Model):

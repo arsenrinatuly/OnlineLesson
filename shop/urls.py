@@ -4,7 +4,7 @@ from .views import (add_product,
                     product_list, 
                     products_formset_view, 
                     icecream_form, add_dz26, add_course, course_modelformset, course_with_lessons_view, user_info, for_staff, 
-                    half_admin, books_list, productsearchform, test_transaction, vote_view, upload_image, serve_file, list_files, photo_list, delete_photo, upload_photo)
+                    half_admin, books_list, productsearchform, test_transaction, vote_view, upload_image, serve_file, list_files, photo_list, delete_photo, upload_photo, upload_file, list_filess)
 
 urlpatterns = [
     path('booklist/', books_list, name='bookslist'),
@@ -24,9 +24,11 @@ urlpatterns = [
     path('test-transaction/', test_transaction, name='test_transaction'),
     path('vote/', vote_view, name='vote_view'),
     path('files/', list_files, name="list_files" ),
+    path('filess/', list_filess, name="list_filess"),
     path('upload/', upload_image, name='upload_image'),
+    path("files/upload/", upload_file, name="upload_file"),
     path('files/<str:filename>/', serve_file, name="serve_file"),
     path("photos/", photo_list, name="photo_list"),
     path("photos/upload/", upload_photo, name = "upload_photo"),
-    path("photos/delete/<int:pk>/", delete_photo, name="delete_photo")
+    path("photos/delete/<int:pk>/", delete_photo, name="delete_photo"),
 ]

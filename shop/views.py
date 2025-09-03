@@ -9,6 +9,7 @@ from django.forms import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.http import HttpResponseForbidden, FileResponse, Http404
+from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import PermissionDenied
 from django.db import transaction, IntegrityError
 from django.conf import settings
@@ -34,6 +35,18 @@ def upload_file(request):
         form = UploadFileform()
 
     return render(request, 'upload_file.html', {'form': form})
+
+
+def upload_low_level(request):
+    context = {}
+    if request.method == 'POST' and request.FILES.get("file"):
+        myfile = request.FILES["file"]
+        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, "manual"))
+        filename = fs.save(myfile.name, myfile)
+        context["file_url"] = fs.url(filename)
+    return render(request, "upload_manual.html", context)
+
+
 
 
 

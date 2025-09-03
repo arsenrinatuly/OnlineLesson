@@ -1,0 +1,10 @@
+<h1>Загрузка вручную</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="file">
+    <button type="submit">Загрузить</button>
+</form>
+
+{% if file_url %}
+    <p>Файл сохранён: <a href="{{ file_url }}" target="_blank">{{ file_url }}</a></p>
+{% endif %}

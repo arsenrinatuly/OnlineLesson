@@ -14,6 +14,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.contrib import messages
+from django.core import signing
 
 
 import os
@@ -213,12 +214,30 @@ def course_modelformset(request):
 def product_list(request):
     products = Product.objects.all()
 
+    signed_products = []
+    for p in products: 
+        signed_id = signing.dumps({"id": p.id})
+        signed_products.append((p, signed_id))
+    
+
     paginator = Paginator(products, 3)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
 
-    return render(request, 'products_list.html', {'products': page_obj.object_list, 'page_obj' : page_obj})
+    return render(request, 'products_list.html', {'products': page_obj.object_list, 'page_obj' : page_obj, 'signed_products': signed_products})
+
+
+def check_product(request, signed_id):
+    try:
+        data = signing.loads(signed_id)
+        product = get_object_or_404(Product, pk=data["id"])
+        return HttpResponse(f"Товар найден: {product.title} , цена {product.price}")
+    except signing.BadSignature:
+        return HttpResponse("Данные подделаны")
+    except Exception as e:
+        return HttpResponse(f"error : {e}")
+
 
 
 def add_product(request):

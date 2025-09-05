@@ -35,6 +35,15 @@
                             <span class="text-muted">Нет категорий</span>
                         {% endfor %}
                     </div>
+                    {% for product, signed_id in signed_products %}
+                  <div>
+                    <h2>{{ product.title }}</h2>
+                    <p>Цена: {{ product.price }}</p>
+                    <p>
+                      <a href="{% url 'check_product' signed_id %}">Открыть с проверкой</a>
+                    </p>
+                  </div>
+                {% endfor %}
                 </div>
             </div>
         {% endfor %}

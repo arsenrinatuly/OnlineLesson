@@ -17,6 +17,13 @@ from django.contrib import messages
 from django.core import signing
 
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import ProductSerializer
+from rest_framework.generics import ListCreateAPIView
+
+
 import os
 import time
 
@@ -257,6 +264,30 @@ def add_product(request):
         form = ProductForm()
 
     return render(request, 'product_form2.html', {'form': form})
+
+
+@api_view(['GET','POST'])
+def create_product(request):
+    if request.method == 'GET':
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductListCreateView(ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+
+
 
 
 def add_dz26(request):

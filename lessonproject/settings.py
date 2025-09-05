@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'captcha',
     'bootstrap4',
     'easy_thumbnails',
-    'django_cleanup.apps.CleanupConfig'
+    'django_cleanup.apps.CleanupConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

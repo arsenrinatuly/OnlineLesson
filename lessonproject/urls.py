@@ -22,6 +22,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -29,7 +34,9 @@ urlpatterns = [
     path('shop/', include('shop.urls')),
     path('login/', LoginView.as_view(template_name='login.html', next_page='home'), name='login'),
     path('logout/', LogoutView.as_view(next_page = 'home'), name='logout'),
-    path('captcha/', include('captcha.urls'))
+    path('captcha/', include('captcha.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair' ),
+    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
 ]   
 
 

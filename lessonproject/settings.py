@@ -86,6 +86,15 @@ REST_FRAMEWORK = {
 }
 
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "C:/Users/sutti/Desktop/OnlineLesson/cache", 
+    }
+}
+
+
+
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

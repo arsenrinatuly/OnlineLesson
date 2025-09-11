@@ -23,9 +23,28 @@ from rest_framework import status
 from .serializers import ProductSerializer
 from rest_framework.generics import ListCreateAPIView
 
+from django.core.cache import cache
+from django.views.decorators.cache import cache_control
 
 import os
 import time
+
+
+@cache_control(max_age=60) 
+def product_list_cached(request):
+    products = cache.get("products")
+    source = "из кэша"
+
+    if not products:
+        products = list(Product.objects.all())
+        cache.set("products", products, 60)  
+        source = "из базы данных"
+
+    return render(
+        request,
+        "product_list_cached.html",
+        {"products": products, "source": source}
+    )
 
 
 def list_filess(request):

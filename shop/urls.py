@@ -5,7 +5,7 @@ from .views import (add_product,
                     products_formset_view, 
                     icecream_form, add_dz26, add_course, course_modelformset, course_with_lessons_view, user_info, for_staff, 
                     half_admin, books_list, productsearchform, test_transaction, vote_view, upload_image, serve_file, list_files, 
-                    photo_list, delete_photo, upload_photo, upload_file, list_filess, upload_low_level, check_product, create_product, ProductListCreateView)
+                    photo_list, delete_photo, upload_photo, upload_file, list_filess, upload_low_level, check_product, create_product, ProductListCreateView, product_list_cached)
 
 urlpatterns = [
     path('booklist/', books_list, name='bookslist'),
@@ -35,5 +35,6 @@ urlpatterns = [
     path("lowlevel/", upload_low_level, name="upload_low_level"),
     path("check_product/<str:signed_id>/", check_product, name='check_product'),
     path("api/products/", create_product, name='create_product'),
-    path("api/products2/", ProductListCreateView.as_view(), name='product_list_create_view')
+    path("api/products2/", ProductListCreateView.as_view(), name='product_list_create_view'),
+    path("product_list_cached/", product_list_cached, name='product_list_cached'),
 ]

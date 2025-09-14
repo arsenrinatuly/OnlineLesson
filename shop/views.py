@@ -29,10 +29,27 @@ from django.views.decorators.cache import cache_control
 from django.contrib.auth.models import User
 
 from rest_framework.authentication import BasicAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 import os
 import time
+
+
+@api_view(['POST'])
+def get_token_manual(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = User.objects.filter(username=username).first()
+    if user and user.check_password(password):
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        })
+    return Response({'error': 'Неверные данные'}, status=400)
+
+
 
 
 

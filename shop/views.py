@@ -71,12 +71,14 @@ def create_user(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def user_list(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
     
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def task_list(request):
     if request.method == "GET":
         tasks = Task.objects.filter(owner=request.user)

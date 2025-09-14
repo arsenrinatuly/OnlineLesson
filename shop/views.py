@@ -17,16 +17,19 @@ from django.contrib import messages
 from django.core import signing
 
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import ProductSerializer, TaskSerializer, UserSerializer, UserCreateSeriliazer
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.models import User
+
+from rest_framework.authentication import BasicAuthentication
+
 
 import os
 import time
@@ -371,6 +374,7 @@ def add_product(request):
 
 
 @api_view(['GET','POST'])
+@authentication_classes([BasicAuthentication])
 def create_product(request):
     if request.method == 'GET':
         products = Product.objects.all()
@@ -390,7 +394,11 @@ class ProductListCreateView(ListCreateAPIView):
     serializer_class = ProductSerializer
 
 
-
+class ProductListView(ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 

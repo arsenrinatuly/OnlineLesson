@@ -6,7 +6,7 @@ from .views import (add_product,
                     icecream_form, add_dz26, add_course, course_modelformset, course_with_lessons_view, user_info, for_staff, 
                     half_admin, books_list, productsearchform, test_transaction, vote_view, upload_image, serve_file, list_files, 
                     photo_list, delete_photo, upload_photo, upload_file, list_filess, upload_low_level, check_product, create_product,
-                    ProductListCreateView, product_list_cached, user_list, task_detail, task_list, create_user, TaskDetailView, TaskMetaView)
+                    ProductListCreateView, product_list_cached, user_list, task_detail, task_list, create_user, TaskDetailView, TaskMetaView, ProductListView)
 
 urlpatterns = [
     path('booklist/', books_list, name='bookslist'),
@@ -43,5 +43,6 @@ urlpatterns = [
     path("api/tasks/", task_list, name="task_list"),
     path("api/createuser/", create_user, name="create_user"),
     path("api/taskdetail/<int:pk>", TaskDetailView.as_view(), name="detail"),
-    path("api/tasks_meta/", TaskMetaView.as_view(), name="task_meta")
+    path("api/tasks_meta/", TaskMetaView.as_view(), name="task_meta"),
+    path("api/list/", ProductListView.as_view(), name="product_list"),
 ]

@@ -20,8 +20,8 @@ from django.core import signing
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import ProductSerializer, TaskSerializer, UserSerializer
-from rest_framework.generics import ListCreateAPIView
+from .serializers import ProductSerializer, TaskSerializer, UserSerializer, UserCreateSeriliazer
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from django.core.cache import cache
@@ -30,6 +30,45 @@ from django.contrib.auth.models import User
 
 import os
 import time
+
+
+
+class TaskDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+
+
+class TaskMetaView(GenericAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(owner=self.request.user)
+    
+    def get(self, request, *args, **kwargs):
+        tasks = self.get_queryset()
+        serializer = self.get_serializer(tasks, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+@api_view(["POST"])
+def create_user(request):
+    serializer = UserCreateSeriliazer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 @api_view(["GET"])
 def user_list(request):

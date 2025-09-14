@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from .models import Product, Icecream, Course, Lesson, Author, Book, Photo, UploadFile
+from .models import Product, Icecream, Course, Lesson, Author, Book, Photo, UploadFile, Task
 # Create your views here.
 from .forms import ProductForm, IceCreamForm, CourseForm, LessonForm, ProductSearchForm, VoteForm, ImageForm, PhotoForm, UploadFileform
 from django.shortcuts import get_object_or_404
@@ -17,18 +17,62 @@ from django.contrib import messages
 from django.core import signing
 
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, TaskSerializer, UserSerializer
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control
+from django.contrib.auth.models import User
 
 import os
 import time
 
+@api_view(["GET"])
+def user_list(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+    
+@api_view(["GET", "POST"])
+def task_list(request):
+    if request.method == "GET":
+        tasks = Task.objects.filter(owner=request.user)
+        serializer = TaskSerializer(tasks, many=True)
+        return Response(serializer.data)
+    elif request.method == "POST":
+        serializer = TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(["GET", "POST"])
+def task_detail(request, pk):
+    try: 
+        task = Task.objects.get(pk=pk)
+    except Task.DoesNotExist:
+        return Response({'error': "Не найдено"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "GET":
+        serializer = TaskSerializer(task)
+        return Response(serializer.data)
+    
+    elif request.method == "POST":
+        serializer = TaskSerializer(task , data=request.data, partial= True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == "DELETE":
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+ 
 
 @cache_control(max_age=60) 
 def product_list_cached(request):
